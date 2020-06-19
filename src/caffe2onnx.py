@@ -485,6 +485,24 @@ class Caffe2Onnx():
                 self.NodeList.append(conv_node)
                 self.__n += 1
 
+            # Reshape	   
+            elif Layers[i].type == "Reshape":
+                reshape_inname, reshape_input_shape = self.__getLastLayerOutNameAndShape(Layers[i])
+
+                reshape_outname = self.__getCurrentLayerOutName(Layers[i])
+                reshape_nodename = reshape_layer.name                
+
+                paramdata = op.getReshapeOutShape(Layers[i],reshape_input_shape)
+                paramshape = [[4]]
+                reshape_pname = self.__addInputsTVIfromMannul(Layers[i], op_pname["Reshape"], op_ptype["Reshape"], paramshape, paramdata)
+                reshape_inname.extend(reshape_pname)
+
+                reshape_node = op.createReshape(Layers[i], reshape_nodename, reshape_inname, reshape_outname, reshape_input_shape)                
+
+                self.NodeList.append(reshape_node)
+                self.__n += 1
+            else:
+                assert(False), "Not supporteed layer"
 
 
     #判断当前节点是否是输出节点
