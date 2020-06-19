@@ -20,3 +20,27 @@ def createSoftmax(layer, nodename, inname, outname, input_shape):
     node = Node.c2oNode(layer, nodename, "Softmax", inname, outname, input_shape, output_shape, dict)
     print(nodename, "节点构建完成")
     return node
+
+def createExp(layer, nodename, inname, outname, input_shape):
+    output_shape = input_shape
+    #构建node
+    node = Node.c2oNode(layer, nodename, "Exp", inname, outname, input_shape, output_shape)
+    print(nodename, "节点构建完成")
+    return node
+
+def createReduceSum(layer, nodename, inname, outname, input_shape, axis, keep_dims=False):
+    dict = {'axes': [axis], 'keepdims': (1 if keep_dims is True else 0)}
+
+    output_shape = input_shape
+    #构建node
+    node = Node.c2oNode(layer, nodename, "ReduceSum", inname, outname, input_shape, output_shape, dict)
+    print(nodename, "节点构建完成")
+    return node    
+
+
+def createDiv(layer, nodename, inname, outname, input_shape):
+    output_shape = [input_shape[0]]
+    #构建node
+    node = Node.c2oNode(layer, nodename, "Div", inname, outname, input_shape, output_shape)
+    print(nodename, "节点构建完成")
+    return node    
