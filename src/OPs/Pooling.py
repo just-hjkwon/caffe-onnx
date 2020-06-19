@@ -19,11 +19,16 @@ def getPoolingAttri(layer):
     elif layer.pooling_param.pad_h != 0 or layer.pooling_param.pad_w != 0:
         pads = [layer.pooling_param.pad_h,layer.pooling_param.pad_w,layer.pooling_param.pad_h,layer.pooling_param.pad_w]
 
+    if layer.pooling_param.round_mode == 0:
+        pads[2] += (kernel_shape[0] - 1)
+        pads[3] += (kernel_shape[1] - 1)
+
     #超参数字典
     dict = {"kernel_shape":kernel_shape,
             "strides":strides,
             "pads":pads
             }
+    
     return dict
 #计算输出维度
 def getPoolingOutShape(input_shape,layer,dict, with_indices=False):
