@@ -309,16 +309,45 @@ class Caffe2Onnx():
 
             #Softmax
             elif Layers[i].type == "Softmax" or Layers[i].type == Layer_SOFTMAX:
-                #1.获取节点输入名、输入维度、输出名、节点名
-                inname,input_shape = self.__getLastLayerOutNameAndShape(Layers[i])#获取输入名列表和输入形状
-                outname = self.__getCurrentLayerOutName(Layers[i])#获取输出名列表
-                nodename = Layers[i].name
+                inname, input_shape = self.__getLastLayerOutNameAndShape(Layers[i])
 
-                #2.构建softmax_node
-                softmax_node = op.createSoftmax(Layers[i],nodename, inname, outname, input_shape)
+                exp_layer = copy.deepcopy(Layers[i])
+                exp_layer.name  = inname[0] + "_Exp"
 
-                #3.添加节点到节点列表
-                self.NodeList.append(softmax_node)
+                exp_inname = [inname[0]]
+                exp_outname = [inname[0] + "_Exp_Y"]
+                exp_nodename = inname[0] + "_Exp"
+                exp_inshape = [input_shape[0]]
+                exp_node = op.createExp(exp_layer, exp_nodename, exp_inname, exp_outname, exp_inshape)                
+
+                self.NodeList.append(exp_node)
+                self.__n += 1
+
+
+                softmax_dict = op.getSoftmaxAttri(Layers[i])
+                
+                reducesum_layer = copy.deepcopy(Layers[i])
+                reducesum_layer.name  = inname[0] + "_ReduceSum"
+
+                reducesum_inname = exp_outname
+                reducesum_outname = [inname[0] + "_ReduceSum_Y"]
+                reducesum_nodename = inname[0] + "_ReduceSum"
+                reducesum_inshape = [input_shape[0]]
+                reducesum_node = op.createReduceSum(reducesum_layer, reducesum_nodename, reducesum_inname, reducesum_outname, reducesum_inshape, softmax_dict['axis'], True)
+
+                self.NodeList.append(reducesum_node)
+                self.__n += 1                
+
+
+                div_layer = copy.deepcopy(Layers[i])
+
+                div_inname = [exp_outname[0], reducesum_outname[0]]
+                div_outname = self.__getCurrentLayerOutName(Layers[i])
+                div_nodename = Layers[i].name
+                div_inshape = [input_shape[0], input_shape[0]]
+                div_node = op.createDiv(div_layer, div_nodename, div_inname, div_outname, div_inshape)                
+
+                self.NodeList.append(div_node)
                 self.__n += 1
 
             #Relu
