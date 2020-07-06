@@ -136,8 +136,12 @@ class Caffe2Onnx():
 
                     if len(ParamShape[0]) == 0:
                         ParamShape = [[1, 1, 1]]
-                    else:
-                        ParamShape = [[ParamShape[0][0], 1, 1]]
+
+                    input_shape_dimension = len(input_shape[0]) - 1
+
+                    while (len(ParamShape[0]) != input_shape_dimension):
+                        ParamShape[0].append(1)
+
                 break
         
         #判断是否有Param
