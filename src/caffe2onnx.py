@@ -274,6 +274,9 @@ class Caffe2Onnx():
                 self.NodeList.append(bn_node)
                 self.__n += 1
 
+            elif Layers[i].type == "Scale" and Layers[i-1].type == "BatchNorm":
+                continue
+                
             #Pooling
             elif Layers[i].type == "Pooling" or Layers[i].type == Layer_POOLING:
                 #1.获取节点输入名、输入维度、输出名、节点名
