@@ -131,11 +131,21 @@ class Caffe2Onnx():
                         ParamData = [[q/1. for q in p.data] if i==0 else [q/(1. + 1e-5) for q in p.data] for i,p in enumerate(Params)]
 
                     # comment it for tvm because tvm use broadcast at prelu layer
-                elif layer.type == "PReLU":                    
+                elif layer.type == "PReLU":   
+                    _, input_shape = self.__getLastLayerOutNameAndShape(layer)
+
                     if len(ParamShape[0]) == 0:
                         ParamShape = [[1, 1, 1]]
-                    else:
-                        ParamShape = [[ParamShape[0][0], 1, 1]]
+
+                    input_shape_dimension = len(input_shape[0]) - 1
+
+                    while (len(ParamShape[0]) != input_shape_dimension):
+                        ParamShape[0].append(1)
+
+                elif layer.type == "Dropout":
+                    ParamShape = [[1], [1]]
+                    ParamData = [[layer.dropout_param.dropout_ratio], [False]]
+
                 break
         
         #判断是否有Param
@@ -268,6 +278,9 @@ class Caffe2Onnx():
                 self.NodeList.append(bn_node)
                 self.__n += 1
 
+            elif Layers[i].type == "Scale" and Layers[i-1].type == "BatchNorm":
+                continue
+                
             #Pooling
             elif Layers[i].type == "Pooling" or Layers[i].type == Layer_POOLING:
                 #1.获取节点输入名、输入维度、输出名、节点名
