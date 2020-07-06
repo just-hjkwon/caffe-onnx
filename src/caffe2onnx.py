@@ -131,7 +131,9 @@ class Caffe2Onnx():
                         ParamData = [[q/1. for q in p.data] if i==0 else [q/(1. + 1e-5) for q in p.data] for i,p in enumerate(Params)]
 
                     # comment it for tvm because tvm use broadcast at prelu layer
-                elif layer.type == "PReLU":                    
+                elif layer.type == "PReLU":   
+                    _, input_shape = self.__getLastLayerOutNameAndShape(layer)
+
                     if len(ParamShape[0]) == 0:
                         ParamShape = [[1, 1, 1]]
                     else:
