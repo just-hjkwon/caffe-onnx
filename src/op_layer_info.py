@@ -20,7 +20,8 @@ op_pname={"Conv":["_W","_b"],
           "InnerProduct":["_W","_B"],
           "ConvTranspose":["_W","_b"],
           "Upsample":["_Scale"],
-          "PRelu":["_slope"]
+          "PRelu":["_slope"],
+          "Dropout":["_ratio", "_training_mode"]
           }
 op_ptype={"Conv":[TensorProto.FLOAT,TensorProto.FLOAT],
           "BatchNorm":[TensorProto.FLOAT,TensorProto.FLOAT],
@@ -29,5 +30,6 @@ op_ptype={"Conv":[TensorProto.FLOAT,TensorProto.FLOAT],
           "InnerProduct":[TensorProto.FLOAT,TensorProto.FLOAT],
           "ConvTranspose":[TensorProto.FLOAT, TensorProto.FLOAT],
           "Upsample":[TensorProto.FLOAT],
-          "PRelu":[TensorProto.FLOAT]
+          "PRelu":[TensorProto.FLOAT],
+          "Dropout":[TensorProto.FLOAT, TensorProto.BOOL]
           }

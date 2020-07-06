@@ -16,6 +16,6 @@ def createDropout(layer, nodename, inname, outname, input_shape):
     dict = getDropoutAttri(layer)
     output_shape = getDropoutOutShape(input_shape)
     # 构建node
-    node = Node.c2oNode(layer, nodename, "Dropout", inname, outname, input_shape, output_shape, dict=dict)
+    node = Node.c2oNode(layer, nodename, "Dropout", inname, outname, input_shape, output_shape)
     print(nodename, "节点构建完成")
     return node

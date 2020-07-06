@@ -404,6 +404,9 @@ class Caffe2Onnx():
                 inname,input_shape = self.__getLastLayerOutNameAndShape(Layers[i])
                 outname = self.__getCurrentLayerOutName(Layers[i])
                 nodename = Layers[i].name
+                
+                pname = self.__addInputsTVIfromParams(Layers[i], op_pname["Dropout"], op_ptype["Dropout"])
+                inname.extend(pname)
 
                 #2.构建Dropout_node
                 Dropout_node = op.createDropout(Layers[i], nodename, inname, outname, input_shape)
