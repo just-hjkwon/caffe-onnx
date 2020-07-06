@@ -56,8 +56,8 @@ class Caffe2Onnx():
             #考虑到整个网络会有多输入情况
             for lay in self._NetLayer:
                 if lay.type == "Input":
-                    in_tvi = helper.make_tensor_value_info(lay.name+"_input", TensorProto.FLOAT, lay.input_param.shape[0].dim)
-                    self.model_input_name.append(lay.name+"_input")
+                    in_tvi = helper.make_tensor_value_info(lay.name+"", TensorProto.FLOAT, lay.input_param.shape[0].dim)
+                    self.model_input_name.append(lay.name+"")
                     self.model_input_shape.append(lay.input_param.shape[0].dim)
                     self.onnxmodel.addInputsTVI(in_tvi)
                     print("添加模型输入信息")
@@ -74,8 +74,10 @@ class Caffe2Onnx():
             else:
                 raise RuntimeError("Input shape missing!")
 
-            in_tvi = helper.make_tensor_value_info("input", TensorProto.FLOAT, input_dim)
-            self.model_input_name.append("input")
+            input_blob_name = net.input[0]
+
+            in_tvi = helper.make_tensor_value_info(input_blob_name, TensorProto.FLOAT, input_dim)
+            self.model_input_name.append(input_blob_name)
             self.model_input_shape.append(input_dim)
             self.onnxmodel.addInputsTVI(in_tvi)
             print("添加模型输入信息")
