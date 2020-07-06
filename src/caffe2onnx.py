@@ -539,7 +539,7 @@ class Caffe2Onnx():
                 reshape_inname, reshape_input_shape = self.__getLastLayerOutNameAndShape(Layers[i])
 
                 reshape_outname = self.__getCurrentLayerOutName(Layers[i])
-                reshape_nodename = reshape_layer.name                
+                reshape_nodename = Layers[i].name                
 
                 paramdata = op.getReshapeOutShape(Layers[i],reshape_input_shape)
                 paramshape = [[4]]
