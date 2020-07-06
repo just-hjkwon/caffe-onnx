@@ -25,8 +25,14 @@ def getReshapeOutShape(layer,input_shape):
             if output_shape[j] == -1:
                 for d in output_shape:
                     in_prod = in_prod / d
-                output_shape[j] = int(in_prod * -1)
+
+                if j != 0:
+                    output_shape[j] = int(in_prod * -1)
+                else:
+                    output_shape[j] = -1
+
         output_shape = [output_shape]
+    
     return output_shape
 #构建节点
 def createReshape(layer, nodename, inname, outname, input_shape):
