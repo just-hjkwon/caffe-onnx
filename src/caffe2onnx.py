@@ -551,6 +551,7 @@ class Caffe2Onnx():
                 self.NodeList.append(reshape_node)
                 self.__n += 1
             else:
+                print(Layers[i])
                 assert(False), "Not supporteed layer"
 
 
