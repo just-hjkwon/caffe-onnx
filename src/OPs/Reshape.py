@@ -10,10 +10,11 @@ def getReshapeOutShape(layer,input_shape):
 
     #计算input shape所有维度之积
     in_prod = 1
-    for dim in input_shape[0]:
-        in_prod = in_prod * dim
+    for d in range(1, len(input_shape[0])):
+        in_prod = in_prod * input_shape[0][d]
+        
     if re_shape == []:
-        output_shape = [[1,in_prod]]
+        output_shape = [[input_shape[0][0],in_prod]]
     else:
         output_shape = re_shape
         for i in range(len(re_shape)):

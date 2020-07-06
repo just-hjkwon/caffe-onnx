@@ -13,8 +13,7 @@ def getSoftmaxOutShape(input_shape):
     output_shape = input_shape#与输入维度一样
     return output_shape
 #构建节点
-def createSoftmax(layer, nodename, inname, outname, input_shape):
-    dict = getSoftmaxAttri(layer)
+def createSoftmax(layer, nodename, inname, outname, input_shape, axis):
     output_shape = getSoftmaxOutShape(input_shape)
     #构建node
     node = Node.c2oNode(layer, nodename, "Softmax", inname, outname, input_shape, output_shape, dict)
@@ -44,3 +43,15 @@ def createDiv(layer, nodename, inname, outname, input_shape):
     node = Node.c2oNode(layer, nodename, "Div", inname, outname, input_shape, output_shape)
     print(nodename, "节点构建完成")
     return node    
+
+def createTranspose(layer, nodename, inname, outname, input_shape, perm):
+    dict = {'perm': perm}
+
+    output_shape = []
+    output_shape.append([])
+    for i in range(len(input_shape[0])):
+        output_shape[0].append(input_shape[0][perm[i]])
+    
+    node = Node.c2oNode(layer, nodename, "Transpose", inname, outname, input_shape, output_shape, dict)
+    print(nodename, "节点构建完成")
+    return node        
