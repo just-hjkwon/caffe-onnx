@@ -310,45 +310,60 @@ class Caffe2Onnx():
                 self.NodeList.append(eltwise_node)
                 self.__n += 1
 
-            #Softmax
             elif Layers[i].type == "Softmax" or Layers[i].type == Layer_SOFTMAX:
                 inname, input_shape = self.__getLastLayerOutNameAndShape(Layers[i])
+                target_axis = Layers[i].softmax_param.axis
 
-                exp_layer = copy.deepcopy(Layers[i])
-                exp_layer.name  = inname[0] + "_Exp"
+                tranpose_layer = copy.deepcopy(Layers[i])
+                tranpose_layer.name  = inname[0] + "_Transpose"
 
-                exp_inname = [inname[0]]
-                exp_outname = [inname[0] + "_Exp_Y"]
-                exp_nodename = inname[0] + "_Exp"
-                exp_inshape = [input_shape[0]]
-                exp_node = op.createExp(exp_layer, exp_nodename, exp_inname, exp_outname, exp_inshape)                
+                tranpose_inname = [inname[0]]
+                tranpose_outname = [inname[0] + "_Transpose_Y"]
+                tranpose_nodename = inname[0] + "_Transpose"
+                transpose_inshape = [input_shape[0]]
+                
+                perm = list(range(len(input_shape[0])))
+                last_axis = len(input_shape[0]) - 1
+                
+                perm[last_axis] = target_axis
+                perm[target_axis] = last_axis
+
+                exp_node = op.createTranspose(tranpose_layer, tranpose_nodename, tranpose_inname, tranpose_outname, transpose_inshape, perm)
 
                 self.NodeList.append(exp_node)
                 self.__n += 1
 
 
-                softmax_dict = op.getSoftmaxAttri(Layers[i])
-                
-                reducesum_layer = copy.deepcopy(Layers[i])
-                reducesum_layer.name  = inname[0] + "_ReduceSum"
+                output_shape = []
+                output_shape.append([])
+                for j in range(len(input_shape[0])):
+                    output_shape[0].append(input_shape[0][perm[j]])
+                                    
+                softmax_layer = copy.deepcopy(Layers[i])
+                softmax_layer.name  = inname[0] + "_Softmax"
 
-                reducesum_inname = exp_outname
-                reducesum_outname = [inname[0] + "_ReduceSum_Y"]
-                reducesum_nodename = inname[0] + "_ReduceSum"
-                reducesum_inshape = [input_shape[0]]
-                reducesum_node = op.createReduceSum(reducesum_layer, reducesum_nodename, reducesum_inname, reducesum_outname, reducesum_inshape, softmax_dict['axis'], True)
+                softmax_inname = tranpose_outname
+                softmax_outname = [inname[0] + "_Softmax_Y"]
+                softmax_nodename = inname[0] + "_Softmax"
+                softmax_inshape = output_shape
+                softmax_node = op.createSoftmax(softmax_layer, softmax_nodename, softmax_inname, softmax_outname, softmax_inshape, last_axis)
 
-                self.NodeList.append(reducesum_node)
+                self.NodeList.append(softmax_node)
                 self.__n += 1                
 
 
-                div_layer = copy.deepcopy(Layers[i])
+                untranspose_layer = copy.deepcopy(Layers[i])
 
-                div_inname = [exp_outname[0], reducesum_outname[0]]
-                div_outname = self.__getCurrentLayerOutName(Layers[i])
-                div_nodename = Layers[i].name
-                div_inshape = [input_shape[0], input_shape[0]]
-                div_node = op.createDiv(div_layer, div_nodename, div_inname, div_outname, div_inshape)                
+                untranspose_inname = [softmax_outname[0]]
+                untranspose_outname = self.__getCurrentLayerOutName(Layers[i])
+                untranspose_nodename = Layers[i].name
+                untranspose_inshape = output_shape
+
+                perm = list(range(len(untranspose_inshape[0])))
+                perm[target_axis] = last_axis
+                perm[last_axis] = target_axis
+
+                div_node = op.createTranspose(untranspose_layer, untranspose_nodename, untranspose_inname, untranspose_outname, untranspose_inshape, perm)                
 
                 self.NodeList.append(div_node)
                 self.__n += 1
