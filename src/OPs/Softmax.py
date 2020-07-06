@@ -14,6 +14,8 @@ def getSoftmaxOutShape(input_shape):
     return output_shape
 #构建节点
 def createSoftmax(layer, nodename, inname, outname, input_shape, axis):
+    dict = {"axis": axis}
+    
     output_shape = getSoftmaxOutShape(input_shape)
     #构建node
     node = Node.c2oNode(layer, nodename, "Softmax", inname, outname, input_shape, output_shape, dict)
