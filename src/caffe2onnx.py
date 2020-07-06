@@ -209,9 +209,9 @@ class Caffe2Onnx():
         # return [layer.name+"_Y"]
         # 考虑有多个输出的情况
         if layer.top == layer.bottom and len(layer.top) == 1:
-            return [layer.name+"_Y"]
+            return [layer.name+""]
         
-        return [out+"_Y" for out in layer.top]
+        return [out+"" for out in layer.top]
 
 
 
@@ -496,8 +496,8 @@ class Caffe2Onnx():
                 #1.获取节点输入名、输入维度、输出名、节点名
                 gemm_inname = reshape_outname
                 gemm_input_shape = self.NodeList[self.__n-1].outputs_shape
-                gemm_outname = [gemm_layer.name+"_Gemm_Y"]
-                gemm_nodename = gemm_layer.name+"_Gemm"
+                gemm_outname = [gemm_layer.name+""]
+                gemm_nodename = gemm_layer.name+""
 
 
                 #2.生成节点参数tensor value info,并获取节点参数名,将参数名加入节点输入名列表
