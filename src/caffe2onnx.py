@@ -142,6 +142,10 @@ class Caffe2Onnx():
                     while (len(ParamShape[0]) != input_shape_dimension):
                         ParamShape[0].append(1)
 
+                elif layer.type == "Dropout":
+                    ParamShape = [[1], [1]]
+                    ParamData = [[layer.dropout_param.dropout_ratio], [False]]
+
                 break
         
         #判断是否有Param
