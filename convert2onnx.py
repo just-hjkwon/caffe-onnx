@@ -26,6 +26,11 @@ def main(args):
     graph, params = loadcaffemodel(caffe_graph_path,caffe_params_path)
     c2o = Caffe2Onnx(graph, params, onnx_name)
     onnxmodel = c2o.createOnnxModel()
+
+    for dim in onnxmodel.graph.input[0].type.tensor_type.shape.dim:
+        if dim.dim_value == -1:
+            dim.dim_param = "N"
+            
     saveonnxmodel(onnxmodel, save_path)
 
 
