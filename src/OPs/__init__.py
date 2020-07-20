@@ -13,3 +13,4 @@ from src.OPs.Softmax import *
 from src.OPs.Upsample import *
 from src.OPs.UnPooling import *
 from src.OPs.ConvTranspose import *
+from src.OPs.Sigmoid import *

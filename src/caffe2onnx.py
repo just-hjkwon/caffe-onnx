@@ -566,9 +566,19 @@ class Caffe2Onnx():
 
                 self.NodeList.append(reshape_node)
                 self.__n += 1
+            # Sigmoid
+            elif Layers[i].type == "Sigmoid":
+                inname,input_shape = self.__getLastLayerOutNameAndShape(Layers[i])#获取输入名列表和输入形状
+                outname = self.__getCurrentLayerOutName(Layers[i])#获取输出名列表
+                nodename = Layers[i].name
+
+                sigmoid_node = op.createSigmoid(Layers[i], nodename, inname, outname, input_shape)
+
+                self.NodeList.append(sigmoid_node)
+                self.__n += 1     
             else:
                 print(Layers[i])
-                assert(False), "Not supporteed layer"
+                assert(False), Layers[i].type + ": Not supporteed layer"
 
 
     #判断当前节点是否是输出节点
