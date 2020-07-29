@@ -17,7 +17,7 @@ def createEltwise(layer, nodename, inname, outname, input_shape):
 
 ##----------------------------------------------Mul层,对应Prod-----------------------------------------------##
 def __createMul(layer, nodename, inname, outname, input_shape):
-    output_shape = input_shape[0]
+    output_shape = [input_shape[0]]
     node = Node.c2oNode(layer, nodename, "Mul", inname, outname, input_shape, output_shape)
     print(nodename, "节点构建完成")
     return node

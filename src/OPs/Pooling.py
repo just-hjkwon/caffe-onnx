@@ -40,14 +40,15 @@ def getPoolingOutShape(input_shape,layer,dict, with_indices=False):
 
     #计算输出维度,与卷积一样,若为非整数则向上取整
     h = (input_shape[0][2] - kernel_shape[0] + pads[0] + pads[2])/strides[0] + 1
-    if h > int(h):
+    
+    if h > int(h) and dict["ceil_mode"] == 1:
         output_shape_h = int(h) + 1
         pads[2] += 1
     else:
         output_shape_h = int(h)
 
     w = (input_shape[0][3] - kernel_shape[1] + pads[1] + pads[3])/strides[1] + 1
-    if w > int(w):
+    if w > int(w) and dict["ceil_mode"] == 1:
         output_shape_w = int(w) + 1
         pads[3] += 1
     else:
@@ -59,7 +60,7 @@ def getPoolingOutShape(input_shape,layer,dict, with_indices=False):
         output_shape = [[input_shape[0][0],input_shape[0][1],output_shape_h,output_shape_w]]
     else:
         output_shape = [[input_shape[0][0],input_shape[0][1],output_shape_h,output_shape_w], [input_shape[0][0],input_shape[0][1],output_shape_h,output_shape_w]]
-
+    
     return output_shape
 #构建节点
 def createPooling(layer,nodename,inname,outname,input_shape):
